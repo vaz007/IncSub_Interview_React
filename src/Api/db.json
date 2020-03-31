@@ -1,0 +1,20 @@
+{
+  "user": [
+    {
+      "email": "ank",
+      "password": "loop",
+      "id": 1
+    },
+    {
+      "email": "ank",
+      "password": "loop",
+      "id": 2
+    },
+    {
+      "email": "av@gm.com",
+      "password": "aaaa",
+      "name": "a",
+      "id": 3
+    }
+  ]
+}
