@@ -1,5 +1,28 @@
 import React, { Component } from "react";
 import "./CSS/index.css";
+import { Field, reduxForm } from "redux-form";
+import validate from "./validate";
+
+const renderField = ({
+  input,
+  label,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <div>
+      <input
+        {...input}
+        placeholder={label}
+        type={type}
+        className="FormField__Input"
+      />
+      {touched &&
+        ((error && <span>{error}</span>) ||
+          (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+);
 
 class SignInForm extends Component {
   state = {
@@ -8,10 +31,7 @@ class SignInForm extends Component {
   };
 
   handleChange = e => {
-    let target = e.target;
-    let value = target.type === "checkbox" ? target.checked : target.value;
-    let name = target.name;
-
+    const { name, value } = e.target;
     this.setState({
       [name]: value
     });
@@ -20,14 +40,12 @@ class SignInForm extends Component {
   handleSubmit = e => {
     e.preventDefault();
     console.log("The form was submitted with the following data:");
-    console.log(this.state);
-
-    const user = {
-      email: this.state.email,
-      password: this.state.password
-    };
-    
-
+    if (Object.keys(validate(this.state)).length > 0) {
+      return alert("Please Check all the details");
+    } else {
+      console.log("The form was submitted with the following data:");
+      console.log(this.state);
+    }
   };
 
   render() {
@@ -38,7 +56,8 @@ class SignInForm extends Component {
             <label className="FormField__Label" htmlFor="email">
               E-Mail Address
             </label>
-            <input
+            <Field
+              label="email"
               type="email"
               id="email"
               className="FormField__Input"
@@ -47,6 +66,7 @@ class SignInForm extends Component {
               autoComplete="new-password"
               value={this.state.email}
               onChange={this.handleChange}
+              component={renderField}
             />
           </div>
 
@@ -54,15 +74,16 @@ class SignInForm extends Component {
             <label className="FormField__Label" htmlFor="password">
               Password
             </label>
-            <input
+            <Field
+              label="Must Be 8 characters or more"
+              name="password"
               type="password"
               id="password"
               className="FormField__Input"
               placeholder="Enter your password"
-              name="password"
-              autoComplete="new-password"
               value={this.state.password}
               onChange={this.handleChange}
+              component={renderField}
             />
           </div>
 
@@ -75,4 +96,7 @@ class SignInForm extends Component {
   }
 }
 
-export default SignInForm;
+export default reduxForm({
+  form: "signInForm", // a unique identifier for this form
+  validate
+})(SignInForm);

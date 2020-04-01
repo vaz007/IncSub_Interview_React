@@ -1,3 +1,8 @@
+.error {
+  background-color: red;
+}
+
+
 .Sin {
   height: 100vh;
   display: flex;

@@ -3,50 +3,79 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { signUpAction } from "../Actions";
 
+import validate from "./validate";
+import { Field, reduxForm } from "redux-form";
+
+const Checkbox = ({ input, meta: { touched, error } }) => (
+  <div style={{ border: touched && error ? "1px solid red" : "none" }}>
+    <input type="checkbox" {...input} />
+  </div>
+);
+
+const renderField = ({
+  input,
+  label,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <div>
+      <input
+        {...input}
+        placeholder={label}
+        type={type}
+        className="FormField__Input"
+      />
+      {touched &&
+        ((error && <span>{error}</span>) ||
+          (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+);
+
 class SignUpForm extends Component {
+
   state = {
     email: "",
     password: "",
     name: "",
-    value: "Developer",
-    hasAgreed: false
+    value: "",
+    termsAndConditions: false
   };
-
-  renderErorr({ error, touched }) {
-    if ( error && touched ) {
-      return (
-        <div className="ui error message">
-          <div className="header">{error}</div>
-        </div>
-      );
-    }
-  }
 
   handleChange = e => {
     let target = e.target;
-    let value = target.type === "checkbox" ? target.checked : target.value;
     let name = target.name;
+    let value = target.value;
 
     this.setState({
       [name]: value,
-      value: value
+      value: value,
+      termsAndConditions: !this.state.termsAndConditions
     });
   };
 
- 
   handleSubmit = e => {
     e.preventDefault();
+    console.log(Object.keys(validate(this.state)).length)
+    if (Object.keys(validate(this.state)).length > 0 || this.state.termsAndConditions) {
+      return (alert("Please Check all the details"))
+    } 
+    else{
+      console.log("The form was submitted with the following data:");
+      console.log(this.state);
+      const user = {
+        email: this.state.email,
+        password: this.state.password,
+        name: this.state.name,
+        termsAndConditions: this.state.termsAndConditions,
+        userValue : this.state.value
+      };
 
-    console.log("The form was submitted with the following data:");
-    console.log(this.state);
-    const user = {
-      email: this.state.email,
-      password: this.state.password,
-      name: this.state.name,
-      userValue: this.state.value
-    };
+      this.props.signUpAction(user);
 
-    this.props.signUpAction(user);
+      console.log(validate(this.state));
+    }
   };
 
   render() {
@@ -57,22 +86,24 @@ class SignUpForm extends Component {
             <label className="FormField__Label" htmlFor="name">
               Full Name
             </label>
-            <input
-              type="text"
+            <Field
+              label="Enter your Full Name"
+              type="name"
               id="name"
               className="FormField__Input"
               placeholder="Enter your full name"
               name="name"
-              autoComplete="new-password"
               value={this.state.name}
               onChange={this.handleChange}
+              component={renderField}
             />
           </div>
           <div className="FormField">
             <label className="FormField__Label" htmlFor="password">
               Password
             </label>
-            <input
+            <Field
+              label="Must Be 8 characters or more"
               type="password"
               id="password"
               className="FormField__Input"
@@ -81,13 +112,15 @@ class SignUpForm extends Component {
               autoComplete="off"
               value={this.state.password}
               onChange={this.handleChange}
+              component={renderField}
             />
           </div>
           <div className="FormField">
             <label className="FormField__Label" htmlFor="email">
               E-Mail Address
             </label>
-            <input
+            <Field
+              label="E-mail"
               type="email"
               id="email"
               className="FormField__Input"
@@ -96,6 +129,7 @@ class SignUpForm extends Component {
               autoComplete="off"
               value={this.state.email}
               onChange={this.handleChange}
+              component={renderField}
             />
           </div>
 
@@ -133,12 +167,14 @@ class SignUpForm extends Component {
 
           <div className="FormField">
             <label className="FormField__CheckboxLabel">
-              <input
+              <Field
                 className="FormField__Checkbox"
                 type="checkbox"
-                name="hasAgreed"
-                value={this.state.hasAgreed}
+                name="termsAndConditions"
+                value={this.state.termsAndConditions}
                 onChange={this.handleChange}
+                component={Checkbox}
+               
               />{" "}
               I agree all statements in{" "}
               <Link to="/" className="FormField__TermsLink">
@@ -148,7 +184,12 @@ class SignUpForm extends Component {
           </div>
 
           <div className="FormField">
-            <button className="FormField__Button mr-20">Sign Up</button>{" "}
+            <button
+              onSubmit={this.onSubmit}
+              className="FormField__Button mr-20"
+            >
+              Sign Up
+            </button>{" "}
             <Link to="/sign-in" className="FormField__Link">
               I'm already member
             </Link>
@@ -158,17 +199,10 @@ class SignUpForm extends Component {
     );
   }
 }
-const validate = formValues => {
-  console.log(formValues)
-  // const errors = {};
-  // if (!formValues.title) {
-  //   errors.title = "You must enter a title";
-  // }
-  // if (!formValues.description) {
-  //   errors.title = "You must enter a description";
-  // }
- // return errors;
-};
 
+const connectSignUp = connect(null, { signUpAction })(SignUpForm);
 
-export default connect(null, { signUpAction })(SignUpForm);
+export default reduxForm({
+  form: "signUpnForm", // a unique identifier for this form
+  validate
+})(connectSignUp);
