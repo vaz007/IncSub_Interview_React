@@ -1,14 +1,26 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import {connect} from 'react-redux'
-import {signUpAction} from '../Actions'
+import { connect } from "react-redux";
+import { signUpAction } from "../Actions";
+
 class SignUpForm extends Component {
   state = {
     email: "",
     password: "",
     name: "",
+    value: "Developer",
     hasAgreed: false
   };
+
+  renderErorr({ error, touched }) {
+    if ( error && touched ) {
+      return (
+        <div className="ui error message">
+          <div className="header">{error}</div>
+        </div>
+      );
+    }
+  }
 
   handleChange = e => {
     let target = e.target;
@@ -16,10 +28,12 @@ class SignUpForm extends Component {
     let name = target.name;
 
     this.setState({
-      [name]: value
+      [name]: value,
+      value: value
     });
   };
 
+ 
   handleSubmit = e => {
     e.preventDefault();
 
@@ -28,7 +42,8 @@ class SignUpForm extends Component {
     const user = {
       email: this.state.email,
       password: this.state.password,
-      name: this.state.name
+      name: this.state.name,
+      userValue: this.state.value
     };
 
     this.props.signUpAction(user);
@@ -85,6 +100,38 @@ class SignUpForm extends Component {
           </div>
 
           <div className="FormField">
+            <label className="FormField__Label" htmlFor="dropdown">
+              I would describe my user type As
+            </label>
+
+            <select
+              value={this.state.value}
+              onChange={this.handleChange}
+              className="FormField_Dropdown"
+            >
+              <option
+                className="FormField_Dropdown_Option"
+                defaultValue
+                value="Developer"
+              >
+                Developer
+              </option>
+              <option
+                className="FormField_Dropdown_Option"
+                value="Solution_Architect"
+              >
+                Solution Architect
+              </option>
+              <option
+                className="FormField_Dropdown_Option"
+                value="Business_Analyst"
+              >
+                Business_Analyst
+              </option>
+            </select>
+          </div>
+
+          <div className="FormField">
             <label className="FormField__CheckboxLabel">
               <input
                 className="FormField__Checkbox"
@@ -94,9 +141,9 @@ class SignUpForm extends Component {
                 onChange={this.handleChange}
               />{" "}
               I agree all statements in{" "}
-              <a href="/" className="FormField__TermsLink">
+              <Link to="/" className="FormField__TermsLink">
                 terms of service
-              </a>
+              </Link>
             </label>
           </div>
 
@@ -111,5 +158,17 @@ class SignUpForm extends Component {
     );
   }
 }
+const validate = formValues => {
+  console.log(formValues)
+  // const errors = {};
+  // if (!formValues.title) {
+  //   errors.title = "You must enter a title";
+  // }
+  // if (!formValues.description) {
+  //   errors.title = "You must enter a description";
+  // }
+ // return errors;
+};
+
 
 export default connect(null, { signUpAction })(SignUpForm);
