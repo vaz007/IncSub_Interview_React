@@ -4,12 +4,15 @@ import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
 import "./Components/CSS/index.css";
 import SignUpForm from "./Components/SignUpForm";
 import SignInForm from "./Components/SignInForm";
+import HeaderAndPara from "./Components/HeaderAndPara";
 
 function App() {
   return (
     <Router>
       <div className="Sin">
-        <div className="App__Aside"></div>
+        <div className="App__Aside">
+          <HeaderAndPara />
+        </div>
         <div className="App__Form">
           <div className="PageSwitcher">
             <NavLink

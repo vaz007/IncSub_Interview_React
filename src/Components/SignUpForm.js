@@ -6,8 +6,8 @@ import { signUpAction } from "../Actions";
 import validate from "./validate";
 import { Field, reduxForm } from "redux-form";
 
-const Checkbox = ({ input, meta: { touched, error } }) => (
-  <div style={{ border: touched && error ? "1px solid red" : "none" }}>
+const Check = ({ input, meta: { touched, error } }) => (
+  <div style={{ border: touched && error ? "1px solid red" : "" }}>
     <input type="checkbox" {...input} />
   </div>
 );
@@ -34,7 +34,6 @@ const renderField = ({
 );
 
 class SignUpForm extends Component {
-
   state = {
     email: "",
     password: "",
@@ -57,11 +56,13 @@ class SignUpForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    console.log(Object.keys(validate(this.state)).length)
-    if (Object.keys(validate(this.state)).length > 0 || this.state.termsAndConditions) {
-      return (alert("Please Check all the details"))
-    } 
-    else{
+    console.log(Object.keys(validate(this.state)).length);
+    if (
+      Object.keys(validate(this.state)).length > 0 ||
+      this.state.termsAndConditions
+    ) {
+      return alert("Please Check all the details");
+    } else {
       console.log("The form was submitted with the following data:");
       console.log(this.state);
       const user = {
@@ -69,7 +70,7 @@ class SignUpForm extends Component {
         password: this.state.password,
         name: this.state.name,
         termsAndConditions: this.state.termsAndConditions,
-        userValue : this.state.value
+        userValue: this.state.value
       };
 
       this.props.signUpAction(user);
@@ -170,11 +171,10 @@ class SignUpForm extends Component {
               <Field
                 className="FormField__Checkbox"
                 type="checkbox"
-                name="termsAndConditions"
+                name="checkbox"
                 value={this.state.termsAndConditions}
                 onChange={this.handleChange}
-                component={Checkbox}
-               
+                component={Check}
               />{" "}
               I agree all statements in{" "}
               <Link to="/" className="FormField__TermsLink">

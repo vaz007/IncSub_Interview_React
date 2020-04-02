@@ -51,6 +51,7 @@ class SignInForm extends Component {
   render() {
     return (
       <div className="FormCenter">
+            
         <form onSubmit={this.handleSubmit} className="FormFields">
           <div className="FormField">
             <label className="FormField__Label" htmlFor="email">
